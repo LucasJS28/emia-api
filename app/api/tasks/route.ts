@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   return res;
 }
 
-export async function PATCH(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   const { id, completed } = await req.json();
   const updatedTask = await updateTaskInDB(id, completed);
 
@@ -23,6 +23,7 @@ export async function PATCH(req: NextRequest) {
   res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
   return res;
 }
+
 
 export async function POST(req: NextRequest) {
   try {
