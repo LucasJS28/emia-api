@@ -3,23 +3,23 @@ import { listTasks, createTask } from '../../../lib/tasks';
 
 export const runtime = 'edge';
 
-export async function GET() {
-  try {
-    const tasks = await listTasks();
-    return NextResponse.json(tasks);
-  } catch (err) {
-    return NextResponse.json({ error: 'Error en DB' }, { status: 500 });
-  }
+export async function GET(req: NextRequest) {
+  // Usa tu función existente
+  const tasks = await listTasks();
+
+  const res = NextResponse.json(tasks);
+  // Permitir solicitudes desde cualquier dominio
+  res.headers.set('Access-Control-Allow-Origin', '*');
+  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  
+  return res;
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const title = (body?.title || '').trim();
-    if (!title) return NextResponse.json({ error: 'title es requerido' }, { status: 400 });
-    const task = await createTask(title);
-    return NextResponse.json(task, { status: 201 });
-  } catch (err) {
-    return NextResponse.json({ error: 'Error en DB' }, { status: 500 });
-  }
+export async function OPTIONS() {
+  const res = NextResponse.json({});
+  res.headers.set('Access-Control-Allow-Origin', '*');
+  res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  return res;
 }
