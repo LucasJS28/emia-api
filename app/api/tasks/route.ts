@@ -4,16 +4,31 @@ import { listTasks, createTask } from '../../../lib/tasks';
 export const runtime = 'edge';
 
 export async function GET(req: NextRequest) {
-  // Usa tu función existente
   const tasks = await listTasks();
-
   const res = NextResponse.json(tasks);
-  // Permitir solicitudes desde cualquier dominio
   res.headers.set('Access-Control-Allow-Origin', '*');
   res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  
   return res;
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const data = await req.json(); // recibe { title: string }
+    const newTask = await createTask(data.title);
+
+    const res = NextResponse.json(newTask, { status: 201 });
+    res.headers.set('Access-Control-Allow-Origin', '*');
+    res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return res;
+  } catch (error) {
+    const res = NextResponse.json({ error: 'Error al crear la tarea' }, { status: 500 });
+    res.headers.set('Access-Control-Allow-Origin', '*');
+    res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return res;
+  }
 }
 
 export async function OPTIONS() {
